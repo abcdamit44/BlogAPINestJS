@@ -1,9 +1,12 @@
+import { Exclude } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
-  PrimaryGeneratedColumn,
   Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Post } from '../post/post.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -20,5 +23,9 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude({ toPlainOnly: true })
   password: string;
+
+  @OneToMany(() => Post, (post: Post) => post.user)
+  posts: Post[];
 }

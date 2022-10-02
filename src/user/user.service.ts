@@ -1,5 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as argon2 from 'argon2';
 import { Repository } from 'typeorm';
 import { UserDto } from './user.dto';
 import { User } from './user.entity';
@@ -13,19 +14,6 @@ export class UserService {
   // Get all users
   async getAllUsers() {
     return await this.userRepository.find();
-  }
-
-  // Create a new user
-  async createUser(userDto: UserDto) {
-    try {
-      return await this.userRepository.save(userDto);
-    } catch (e) {
-      if (/(email)[\s\S]+(already exists)/.test(e.detail)) {
-        throw new BadRequestException(
-          'Account with this email already exists.',
-        );
-      }
-    }
   }
 
   // Find a user
@@ -46,7 +34,13 @@ export class UserService {
     if (!user) {
       return { message: 'User does not exist' };
     }
-    await this.userRepository.update(user.id, userDto);
+    user.password = await argon2.hash(userDto.password);
+    const userObj = {
+      name: userDto.name,
+      email: userDto.email,
+      password: await argon2.hash(userDto.password),
+    };
+    await this.userRepository.update(user.id, userObj);
     return { message: 'User updated successfully' };
   }
 
