@@ -26,6 +26,9 @@ export class User {
   @Exclude({ toPlainOnly: true })
   password: string;
 
-  @OneToMany(() => Post, (post: Post) => post.user)
+  @OneToMany(() => Post, (post: Post) => post.user.id, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   posts: Post[];
 }
