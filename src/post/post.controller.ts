@@ -7,6 +7,6 @@ export class PostController {
 
   @Get()
   index() {
-    return this.postService.index();
+    return "hii"
   }
 }
