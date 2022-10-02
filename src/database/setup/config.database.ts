@@ -1,4 +1,5 @@
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
+import CustomNamingStrategy from '../customNameStratagy';
 
 export const configDatabase: TypeOrmModuleAsyncOptions = {
   useFactory: async () => {
@@ -12,6 +13,7 @@ export const configDatabase: TypeOrmModuleAsyncOptions = {
       entities: ['/src/**/*.entity.ts'],
       autoLoadEntities: true,
       synchronize: true,
+      namingStrategy: new CustomNamingStrategy(),
     };
   },
 };

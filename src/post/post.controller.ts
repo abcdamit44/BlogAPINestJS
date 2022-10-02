@@ -1,4 +1,3 @@
-import { PostDto } from './post.dto';
 import {
   Body,
   Controller,
@@ -7,11 +6,17 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../common/authGuard/jwtAuthGuard.guard';
+import { GetCurrentUserById } from '../common/decorators/getUserById';
+import { PostDto } from './post.dto';
 import { PostService } from './post.service';
 
 @ApiTags('Post')
+@ApiSecurity('JWT_auth')
+@UseGuards(JwtAuthGuard)
 @Controller('post')
 export class PostController {
   constructor(private postService: PostService) {}
@@ -27,8 +32,11 @@ export class PostController {
   @Post()
   @ApiBody({ type: PostDto })
   @ApiOperation({ summary: 'Create a new post' })
-  async createPost(@Body() postDto: PostDto) {
-    return this.postService.createPost(postDto);
+  async createPost(
+    @Body() postDto: PostDto,
+    @GetCurrentUserById() currentUserId: number,
+  ) {
+    return this.postService.createPost(postDto, currentUserId);
   }
   // Find post by id
   @Get(':id')

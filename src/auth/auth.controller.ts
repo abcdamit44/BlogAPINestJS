@@ -1,15 +1,20 @@
-import { User } from './../user/user.entity';
+import { Body, Controller, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { UserDto } from './../user/user.dto';
-import { Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { AuthDto } from './auth.dto';
 import { AuthService } from './auth.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { PostService } from '../post/post.service';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Post('/local/signin')
+  async signinLocal(@Body() authDto: AuthDto) {
+    return this.authService.signinLocal(authDto);
+  }
   @Post('/local/signup')
-  async signup() {}
+  async signupLocal(@Body() userDto: UserDto) {
+    return this.authService.signupLocal(userDto);
+  }
 }
