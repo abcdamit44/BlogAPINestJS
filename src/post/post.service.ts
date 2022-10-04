@@ -19,6 +19,10 @@ export class PostService {
   async createPost(postDto: PostDto, currentUserId: number) {
     const post = this.postRepository.create(postDto);
     post.created_by = currentUserId;
+    const user = await this.userRepository.findOne({
+      where: { id: currentUserId },
+    });
+    post.user = user;
     return await this.postRepository.save(post);
   }
 
